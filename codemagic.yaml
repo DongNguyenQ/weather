@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
-      flutter: stable
+      flutter: 3.13.9
       android_signing: 
         - weather_keystore
     scripts:
@@ -13,7 +13,7 @@ workflows:
           echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
       - name: Get Flutter packages
         script: | 
-          flutter pub get
+          flutter clean && flutter pub get
       - name: Build AAB with Flutter
         script: | 
           flutter build appbundle --release

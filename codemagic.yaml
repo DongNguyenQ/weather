@@ -55,7 +55,7 @@ workflows:
       - *clean_get_flutter_packages
       - name: Build AAB with Flutter
         script: | 
-          flutter build appbundle --debug
+          flutter build apk --split-per-abi
     publishing: 
       email:
         recipients:

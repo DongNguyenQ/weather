@@ -29,3 +29,6 @@ workflows:
         notify:
           success: true
           failure: true
+    triggering:
+      events:
+        - push

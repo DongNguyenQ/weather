@@ -166,3 +166,4 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 
 credentials/
+.vscode/

@@ -1,26 +1,34 @@
+definitions:
+  env_versions: &env_versions
+    flutter: 3.13.9
+    # xcode: latest
+  machine_instance_type: &machine_instance_type
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+  scripts:
+    - &clean_get_flutter_packages
+      name: Clean & Get Flutter packages
+      script: |
+        flutter clean && flutter pub get
+
 workflows:
   cd:
     name: CD Workflow
-    max_build_duration: 120
-    instance_type: mac_mini_m2
+    <<: *machine_instance_type
     environment:
-      flutter: 3.13.9
+      <<: *env_versions
       android_signing: 
         - weather_keystore
     scripts:
       - name: Set up local.properties
         script: | 
           echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-      - name: Get Flutter packages
-        script: | 
-          flutter clean && flutter pub get
+      - *clean_get_flutter_packages
       - name: Build AAB with Flutter
         script: | 
           flutter build appbundle --release
     artifacts:
       - build/**/outputs/**/*.aab
-      - build/**/outputs/**/mapping.txt
-      - flutter_drive.log
 
     publishing: 
       email:
@@ -34,6 +42,32 @@ workflows:
         - push
         - pull_request
       branch_patterns:
-        - pattern: "*"
+        - pattern: "main"
+          include: true
+          source: true  
+  
+  ci:
+    name: CI Workflow
+    <<: *machine_instance_type
+    environment:
+      <<: *env_versions
+    scripts:
+      - *clean_get_flutter_packages
+      - name: Build AAB with Flutter
+        script: | 
+          flutter build appbundle --debug
+    publishing: 
+      email:
+        recipients:
+          - dongnqdev@gmail.com
+        notify:
+          success: true
+          failure: true
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: "dev"
           include: true
           source: true  
